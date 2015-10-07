@@ -16,9 +16,9 @@
 
 package fr.robincarozzani.pamaja;
 
+import java.io.Console;
 import java.security.Security;
 import java.util.Map;
-import java.util.Scanner;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -45,7 +45,7 @@ public class Launcher {
 	private static Hash storedPwd;
 	private static byte[] origSalt;
 	
-	private static Scanner s;
+	private static Console cons;
 	
 	private static final int PWDLEN = 17;
 
@@ -67,7 +67,7 @@ public class Launcher {
 		Hashor h = Hashor.getInstance();
 		Ciphor c = Ciphor.getInstance();
 		DBHandler dbh = DBHandler.getInstance();
-		s = new Scanner(System.in);
+		cons = System.console();
 		System.out.println("done");
 		
 		System.out.print("Opening DB... ");
@@ -85,7 +85,7 @@ public class Launcher {
 		if (!dbh.isInit()) {
 			System.out.println("No master password is set");
 			System.out.println("Type a master password (and remember it) ");
-			String clearMasterPassword = s.nextLine();
+			String clearMasterPassword = cons.readLine();
 			
 			System.out.print("Hashing password... ");
 			Hash hashedPassword = h.generatePasswordHash(clearMasterPassword);
@@ -116,9 +116,10 @@ public class Launcher {
 			}
 			System.out.println("done");
 			System.out.println("Type your master password");
-			String clearInPassword = s.nextLine();
+			String clearInPassword = new String(cons.readPassword());
 			System.out.print("Checking master password... ");
 			Hash hashedIn = h.hash(clearInPassword, origSalt, 64);
+			clearInPassword = null;
 			boolean matched = h.checkHash(hashedIn, storedPwd);
 			System.out.println("done");
 			if (!matched) {
@@ -179,7 +180,7 @@ public class Launcher {
 			System.out.println("\t (C) Change a password");
 			System.out.println("\t (Q) Quit");
 			System.out.println("Type the letter corresponding to your choice");
-			String check = s.nextLine();
+			String check = cons.readLine();
 			if (check.equals("")) {
 				choice = ' ';
 			} else {
@@ -189,10 +190,10 @@ public class Launcher {
 			switch (Character.toUpperCase(choice)) {
 			case 'A':
 				System.out.println("Type the name of the service (website, game...) (empty to cancel)");
-				String service = s.nextLine();
+				String service = cons.readLine();
 				if (!service.equals("")) {
 					System.out.println("Type your login (empty to cancel)");
-					String login = s.nextLine();
+					String login = cons.readLine();
 					if (!login.equals("")) {
 						System.out.print("\nEncrypting login... ");
 						Ciph ciphLoginA = Ciphor.getInstance().encrypt(login.getBytes(), masterKey);
@@ -263,7 +264,7 @@ public class Launcher {
 			}
 			System.out.println("Type the number of the wanted service (-1 to cancel)");
 			try {
-				serviceId = Integer.parseInt(s.nextLine());
+				serviceId = Integer.parseInt(cons.readLine());
 			} catch (NumberFormatException e) {
 				serviceId = -2;
 			}
@@ -285,7 +286,7 @@ public class Launcher {
 			}
 			System.out.println("Type the number of the wanted login (-1 to cancel)");
 			try {
-				loginId = Integer.parseInt(s.nextLine()); 
+				loginId = Integer.parseInt(cons.readLine());
 			} catch (NumberFormatException e) {
 				loginId = -2;
 			}
@@ -302,10 +303,13 @@ public class Launcher {
 		DBHandler.getInstance().disconnect();
 		System.out.println("done");
 		System.out.print("Releasing instances... ");
-		s.close();
-		masterKey = null;
-		origSalt = null;
-		storedPwd = null;
+		for (int i=0 ; i<masterKey.length ; ++i) {
+			masterKey[i] = 0;
+		}
+		for (int i=0 ; i<origSalt.length ; ++i) {
+			origSalt[i] = 0;
+		}
+		storedPwd.clear();
 		System.out.println("done");
 		System.out.println("\nGoodbye");
 		System.exit(0);

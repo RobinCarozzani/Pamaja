@@ -62,6 +62,18 @@ public class Hash {
 	}
 	
 	/**
+	 * Deletes all data for the hash
+	 */
+	public void clear() {
+		for (int i=0 ; i<_salt.length ; ++i) {
+			_salt[i] = 0;
+		}
+		for (int i=0 ; i<_hash.length ; ++i) {
+			_hash[i] = 0;
+		}
+	}
+	
+	/**
 	 * String representation of Hash, salt;hash
 	 */
 	@Override
