@@ -444,8 +444,8 @@ public class DBHandler {
 	 */
 	public Map<Integer, Ciph> getLogins(int serviceId) {
 		String sql = "SELECT * FROM locl"
-				  + " WHERE id = (SELECT lid FROM corda"
-				  + "			  WHERE sid = "+serviceId+");";
+				  + " WHERE id IN (SELECT lid FROM corda"
+				  + "			   WHERE sid = "+serviceId+");";
 		ResultSet rs = executeWithResult(sql);
 		Map<Integer, Ciph> logins = new HashMap<Integer, Ciph>();
 		try {
