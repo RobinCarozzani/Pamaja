@@ -303,8 +303,10 @@ public class Launcher {
 		DBHandler.getInstance().disconnect();
 		System.out.println("done");
 		System.out.print("Releasing instances... ");
-		for (int i=0 ; i<masterKey.length ; ++i) {
-			masterKey[i] = 0;
+		if (masterKey != null) {
+			for (int i=0 ; i<masterKey.length ; ++i) {
+				masterKey[i] = 0;
+			}
 		}
 		for (int i=0 ; i<origSalt.length ; ++i) {
 			origSalt[i] = 0;
