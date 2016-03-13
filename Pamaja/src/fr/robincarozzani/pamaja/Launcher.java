@@ -26,6 +26,7 @@ import fr.robincarozzani.pamaja.crypto.Ciph;
 import fr.robincarozzani.pamaja.crypto.Ciphor;
 import fr.robincarozzani.pamaja.crypto.Hash;
 import fr.robincarozzani.pamaja.crypto.Hashor;
+import fr.robincarozzani.pamaja.crypto.Password;
 import fr.robincarozzani.pamaja.crypto.Randgen;
 import fr.robincarozzani.pamaja.db.DBHandler;
 import fr.robincarozzani.pamaja.utils.Pair;
@@ -199,7 +200,8 @@ public class Launcher {
 						Ciph ciphLoginA = Ciphor.getInstance().encrypt(login.getBytes(), masterKey);
 						System.out.println("done");
 						System.out.print("Generating a password... ");
-						String pwd = Randgen.generateRandomPassword(PWDLEN);
+						Password pass1 = new Password(PWDLEN, PWDLEN, true, true, true, true);
+						String pwd = pass1.getPwd();
 						Ciph ciphPwdA = Ciphor.getInstance().encrypt(pwd.getBytes(), masterKey);
 						System.out.println("done");
 						System.out.print("Updating DB... ");
@@ -232,7 +234,8 @@ public class Launcher {
 					Pair<Integer, String> loginC = scanLogin(serviceC.first().intValue());
 					if (loginC != null) {
 						System.out.print("Generating a password... ");
-						String pwdc = Randgen.generateRandomPassword(PWDLEN);
+						Password pass2 = new Password(PWDLEN, PWDLEN, true, true, true, true);
+						String pwdc = pass2.getPwd();
 						Ciph ciphPwdC = Ciphor.getInstance().encrypt(pwdc.getBytes(), masterKey);
 						System.out.println("done");
 						System.out.print("Updating DB... ");

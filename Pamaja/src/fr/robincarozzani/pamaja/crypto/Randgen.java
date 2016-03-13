@@ -55,21 +55,18 @@ public class Randgen {
 	}
 	
 	/**
-	 * Generates random password, possibly containing numbers, letters (lower and upper case), special characters
-	 * @param length Length of generated password
-	 * @return Random clear text password
+	 * Generates random String, containing any symbol from the given list
+	 * @param length Length (number of symbols) of generated String
+	 * @param symbols Characters to construct the String from
+	 * @return Random String
 	 */
-	public static String generateRandomPassword(int length) {
-		final String[] symbols = {"0","1","2","3","4","5","6","7","8","9",
-				"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",
-				"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
-				"@","&","$","#","%","*","?",":",";","!","§","-","_","=",".","/","<",">","(",")","¤"};
-		String password = "";
+	public static String generateRandomString(int length, String[] symbols) {
+		String randString = "";
 		Random rand = new Random(System.currentTimeMillis());
 		for (int i=0 ; i<length ; ++i) {
 			int ind = rand.nextInt(symbols.length);
-			password += symbols[ind];
+			randString += symbols[ind];
 		}
-		return password;
+		return randString;
 	}
 }
