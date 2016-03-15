@@ -25,14 +25,13 @@ import java.util.Random;
  * Password object representation
  * @author Robin Carozzani
  * @TODO Forbid empty alphabet
- * @TODO Possibility to exclude specific characters
  */
 public class Password {
 	
 	private static final String[] UPPERCHARS = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
 	private static final String[] LOWERCHARS = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"};
 	private static final String[] NUMERIC = {"0","1","2","3","4","5","6","7","8","9"};
-	private static final String[] SPECIAL = {"@","&","$","#","%","*","?",":",";","!","§","-","_","=",".","/","<",">","(",")","¤"};
+	private static final String[] SPECIAL = {"@","&","$","#","%","*","?",":",";","!","-","_","=",".","/","<",">","(",")", "+"};
 	
 	private int _minLength;
 	private int _maxLength;
@@ -42,8 +41,7 @@ public class Password {
 	private boolean _withLowerChars;
 	private boolean _withNumeric;
 	private boolean _withSpecials;
-	
-	private String _pwd;
+	private List<String> _excluded;
 	
 	/**
 	 * Creates an instance of Password object
@@ -62,7 +60,7 @@ public class Password {
 		_withLowerChars = useLowerLetter;
 		_withNumeric = useNumbers;
 		_withSpecials = useSpecialChars;
-		_pwd = null;
+		_excluded = new ArrayList<>();
 	}
 
 	private void computeLength() {
@@ -74,7 +72,34 @@ public class Password {
 		}
 	}
 	
-	private void createPwd() {
+	/**
+	 * Specifies a character that should NOT be part of the password 
+	 * @param character The character to exclude
+	 */
+	public void exclude(String character) {
+		_excluded.add(character);
+	}
+	
+	/**
+	 * Removes the specified character from the list of excluded character
+	 * @param character The character to re-include
+	 */
+	public void unexclude(String character) {
+		_excluded.remove(character);
+	}
+	
+	/**
+	 * Clears the list of excluded characters
+	 */
+	public void clearExcluded() {
+		_excluded = new ArrayList<>();
+	}
+	
+	/**
+	 * Gives the randomly-generated password
+	 * @return Clear-text random password
+	 */
+	public String getPwd() {
 		List<String> alphabet = new ArrayList<>();
 		if (_withUpperChars) {
 			alphabet.addAll(Arrays.asList(UPPERCHARS));
@@ -88,17 +113,9 @@ public class Password {
 		if (_withSpecials) {
 			alphabet.addAll(Arrays.asList(SPECIAL));
 		}
-		_pwd = Randgen.generateRandomString(_length, alphabet.toArray(new String[alphabet.size()]));
-	}
-	
-	/**
-	 * Gives the randomly-generated password
-	 * @return Clear-text random password
-	 */
-	public String getPwd() {
-		if (_pwd == null) {
-			createPwd();
+		for (String s : _excluded) {
+			alphabet.remove(s);
 		}
-		return _pwd;
+		return Randgen.generateRandomString(_length, alphabet.toArray(new String[alphabet.size()]));
 	}
 }
